@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Felipe Rodriguez | Digital Photography Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        dark: '#0a0a0a',
+                        darker: '#050505',
+                        accent: '#d4d4d8'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: theme('colors.darker');
+            color: theme('colors.zinc.100');
+            overflow-x: hidden;
+        }
+        
+        /* Custom minimalist scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: theme('colors.darker');
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.zinc.800');
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.zinc.600');
+        }
+
+        /* Smooth View Transitions */
+        .view-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Image hover effects */
+        .img-hover-zoom {
+            overflow: hidden;
+        }
+        .img-hover-zoom img {
+            transition: transform 0.7s ease;
+        }
+        .img-hover-zoom:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Masonry Grid */
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1rem;
+        }
+        @media (min-width: 640px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+        
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+        }
+
+        .loader {
+            border: 2px solid theme('colors.zinc.800');
+            border-top-color: theme('colors.zinc.200');
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased selection:bg-zinc-700 selection:text-white">
+
+    <nav class="fixed top-0 w-full z-40 mix-blend-difference px-6 py-8 flex justify-between items-center transition-all duration-300" id="navbar">
+        <a href="#" onclick="navigateTo('home'); return false;" class="text-xl font-serif tracking-wide hover:text-zinc-400 transition-colors uppercase">
+            Felipe Rodriguez
+        </a>
+        <div class="flex gap-6 text-sm tracking-widest uppercase">
+            <a href="#" onclick="navigateTo('portfolio'); return false;" class="hover:text-zinc-400 transition-colors">Portfolio</a>
+            <a href="#" onclick="navigateTo('home', 'contact-section'); return false;" class="hover:text-zinc-400 transition-colors">Contact</a>
+        </div>
+    </nav>
+
+    <main id="app-container">
+        
+        <!-- View: HOME -->
+        <section id="view-home" class="view-section active">
+            <!-- Hero Banner -->
+            <div class="relative h-screen w-full flex items-center justify-center bg-darker">
+                <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2070&auto=format&fit=crop" 
+                     alt="Cinematic Landscape" 
+                     class="absolute inset-0 w-full h-full object-cover opacity-60">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-darker/20 to-darker"></div>
+                
+                <div class="relative z-10 text-center flex flex-col items-center">
+                    <h1 class="text-4xl md:text-7xl font-serif font-light mb-8 tracking-wider text-white drop-shadow-lg">Cinematic Visions</h1>
+                    <button onclick="navigateTo('portfolio')" class="group relative px-8 py-4 text-sm uppercase tracking-[0.2em] overflow-hidden border border-white/30 backdrop-blur-sm hover:border-white transition-all duration-500">
+                        <span class="relative z-10 group-hover:text-darker transition-colors duration-500">Enter Portfolio</span>
+                        <div class="absolute inset-0 bg-white transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></div>
+                    </button>
+                </div>
+                
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce opacity-50">
+                    <i data-lucide="chevron-down" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <!-- About Me -->
+            <div id="about-section" class="max-w-4xl mx-auto px-6 py-32 flex flex-col md:flex-row gap-12 items-center">
+                <div class="w-full md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1554046920-90dc5823ba0a?q=80&w=1000&auto=format&fit=crop" alt="Felipe Rodriguez" class="w-full h-auto rounded-sm grayscale hover:grayscale-0 transition-all duration-700">
+                </div>
+                <div class="w-full md:w-1/2 space-y-6">
+                    <h2 class="text-3xl font-serif mb-4">The Observer</h2>
+                    <p class="text-zinc-400 font-light leading-relaxed">
+                        I am a photographer specializing in film-simulated landscapes and automotive portraiture. Shot entirely on Canon systems, my work seeks to capture the warmth, grain, and authentic atmosphere of moments that feel both timeless and immediate.
+                    </p>
+                    <p class="text-zinc-400 font-light leading-relaxed">
+                        Every frame is an exercise in minimalism—removing the noise to reveal the subject's true character, whether that's a sweeping canyon or the curved fender of a classic machine.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div id="contact-section" class="max-w-2xl mx-auto px-6 py-32 border-t border-zinc-900">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-serif mb-4">Get in Touch</h2>
+                    <p class="text-zinc-500 font-light text-sm uppercase tracking-widest">Inquiries & Commission Requests</p>
+                </div>
+                
+                <form id="contact-form" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="relative">
+                            <input type="text" id="contact-name" required class="w-full bg-transparent border-b border-zinc-800 py-3 text-white focus:outline-none focus:border-zinc-400 transition-colors peer" placeholder=" ">
+                            <label class="absolute left-0 top-3 text-zinc-600 pointer-events-none transition-all peer-focus:-top-4 peer-focus:text-xs peer-focus:text-zinc-400 peer-valid:-top-4 peer-valid:text-xs peer-valid:text-zinc-400">Name</label>
+                        </div>
+                        <div class="relative">
+                            <input type="email" id="contact-email" required class="w-full bg-transparent border-b border-zinc-800 py-3 text-white focus:outline-none focus:border-zinc-400 transition-colors peer" placeholder=" ">
+                            <label class="absolute left-0 top-3 text-zinc-600 pointer-events-none transition-all peer-focus:-top-4 peer-focus:text-xs peer-focus:text-zinc-400 peer-valid:-top-4 peer-valid:text-xs peer-valid:text-zinc-400">Email</label>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <textarea id="contact-message" required rows="4" class="w-full bg-transparent border-b border-zinc-800 py-3 text-white focus:outline-none focus:border-zinc-400 transition-colors peer resize-none" placeholder=" "></textarea>
+                        <label class="absolute left-0 top-3 text-zinc-600 pointer-events-none transition-all peer-focus:-top-4 peer-focus:text-xs peer-focus:text-zinc-400 peer-valid:-top-4 peer-valid:text-xs peer-valid:text-zinc-400">Your Message</label>
+                    </div>
+                    <button type="submit" id="submit-btn" class="w-full py-4 bg-white text-darker font-medium uppercase tracking-widest text-sm hover:bg-zinc-200 transition-colors flex justify-center items-center h-14">
+                        <span>Send Request</span>
+                    </button>
+                    <div id="form-status" class="hidden text-center text-sm p-4 rounded bg-zinc-900 border border-zinc-800"></div>
+                </form>
+            </div>
+            
+            <footer class="py-8 text-center text-zinc-600 text-xs uppercase tracking-widest border-t border-zinc-900">
+                &copy; <span id="year"></span> Felipe Rodriguez. All Rights Reserved.
+            </footer>
+        </section>
+
+        <!-- View: PORTFOLIO CATEGORIES -->
+        <section id="view-portfolio" class="view-section min-h-screen pt-32 pb-20 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-end mb-16">
+                    <h2 class="text-4xl font-serif font-light">Collections</h2>
+                    <button onclick="navigateTo('all-photos')" class="text-sm uppercase tracking-widest border-b border-zinc-700 pb-1 hover:border-white transition-colors flex items-center gap-2">
+                        <i data-lucide="grid" class="w-4 h-4"></i> View All Photos
+                    </button>
+                </div>
+                
+                <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Categories injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- View: ALL PHOTOS -->
+        <section id="view-all-photos" class="view-section min-h-screen pt-32 pb-20 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+                    <h2 class="text-4xl font-serif font-light">Archive</h2>
+                    
+                    <!-- Filters -->
+                    <div class="flex flex-wrap gap-4 w-full md:w-auto">
+                        <select id="filter-subject" class="bg-darker border border-zinc-800 text-sm py-2 px-4 text-zinc-300 focus:outline-none focus:border-zinc-500 rounded-none cursor-pointer">
+                            <option value="all">All Subjects</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Portrait">Portrait</option>
+                            <option value="Landscape">Landscape</option>
+                            <option value="Architectural">Architectural</option>
+                        </select>
+                        <select id="filter-color" class="bg-darker border border-zinc-800 text-sm py-2 px-4 text-zinc-300 focus:outline-none focus:border-zinc-500 rounded-none cursor-pointer">
+                            <option value="all">All Tones</option>
+                            <option value="Warm">Warm</option>
+                            <option value="Cool">Cool</option>
+                            <option value="Monochrome">Monochrome</option>
+                            <option value="Vibrant">Vibrant</option>
+                        </select>
+                        <select id="filter-date" class="bg-darker border border-zinc-800 text-sm py-2 px-4 text-zinc-300 focus:outline-none focus:border-zinc-500 rounded-none cursor-pointer">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="gallery-grid" class="masonry-grid">
+                    <!-- Gallery photos injected via JS -->
+                </div>
+                
+                <div id="no-results" class="hidden text-center py-20 text-zinc-500 font-light">
+                    No photos found matching these filters.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Full-screen Carousel Overlay -->
+    <div id="carousel-modal" class="fixed inset-0 z-50 bg-darker/95 backdrop-blur-xl hidden flex-col transition-opacity duration-300 opacity-0">
+        <!-- Toolbar -->
+        <div class="flex justify-between items-center p-6 w-full absolute top-0 left-0 z-10">
+            <div id="carousel-category-title" class="text-sm uppercase tracking-widest text-zinc-400">Category</div>
+            <div class="flex gap-4">
+                <button id="btn-toggle-width" class="p-2 text-zinc-400 hover:text-white transition-colors" title="Toggle Size">
+                    <i data-lucide="maximize" class="w-5 h-5"></i>
+                </button>
+                <button onclick="closeCarousel()" class="p-2 text-zinc-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Carousel Content -->
+        <div class="flex-1 flex items-center justify-center w-full relative overflow-hidden">
+            <button onclick="prevSlide()" class="absolute left-4 md:left-10 p-4 text-zinc-500 hover:text-white transition-colors z-10 bg-darker/50 rounded-full hover:bg-darker/80 backdrop-blur">
+                <i data-lucide="chevron-left" class="w-8 h-8"></i>
+            </button>
+            
+            <div id="carousel-image-container" class="w-full h-full flex items-center justify-center p-4 md:p-20 transition-all duration-500">
+                <img id="carousel-img" src="" alt="View" class="max-w-full max-h-full object-contain shadow-2xl transition-opacity duration-300">
+            </div>
+
+            <button onclick="nextSlide()" class="absolute right-4 md:right-10 p-4 text-zinc-500 hover:text-white transition-colors z-10 bg-darker/50 rounded-full hover:bg-darker/80 backdrop-blur">
+                <i data-lucide="chevron-right" class="w-8 h-8"></i>
+            </button>
+        </div>
+
+        <!-- Carousel Footer info -->
+        <div class="absolute bottom-0 w-full p-6 text-center z-10 bg-gradient-to-t from-darker to-transparent pointer-events-none">
+            <h3 id="carousel-title" class="text-xl font-serif"></h3>
+            <p id="carousel-meta" class="text-xs text-zinc-500 mt-2 uppercase tracking-widest"></p>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Variables
+        let db = null;
+        let auth = null;
+        let isFirebaseReady = false;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'felipe-portfolio-default';
+        let currentUserId = null;
+
+        // Initialize Firebase securely
+        async function initFirebase() {
+            try {
+                if (typeof __firebase_config !== 'undefined') {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+
+                    // Handle Authentication per strict rules
+                    if (typeof __initial_auth_token !== 'undefined') {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    
+                    currentUserId = auth.currentUser?.uid;
+                    isFirebaseReady = true;
+                    console.log("Firebase initialized successfully.");
+                } else {
+                    console.warn("Firebase config not found. Form submissions will be simulated.");
+                }
+            } catch (error) {
+                console.error("Firebase initialization error:", error);
+            }
+        }
+
+        initFirebase();
+
+        // Handle Contact Form Submission
+        const contactForm = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+        const submitBtn = document.getElementById('submit-btn');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+            
+            submitBtn.innerHTML = '<div class="loader"></div>';
+            submitBtn.disabled = true;
+
+            try {
+                if (isFirebaseReady && db && currentUserId) {
+                    // Strict Rule 1: Use specific paths
+                    const contactsRef = collection(db, 'artifacts', appId, 'public', 'data', 'contact_requests');
+                    await addDoc(contactsRef, {
+                        name,
+                        email,
+                        message,
+                        timestamp: new Date().toISOString()
+                    });
+                } else {
+                    // Simulate network delay if Firebase isn't configured
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                }
+
+                // Show success
+                formStatus.className = 'block text-center text-sm p-4 rounded bg-emerald-950/30 border border-emerald-900 text-emerald-400 mt-4';
+                formStatus.textContent = 'Thank you. Your request has been sent successfully.';
+                contactForm.reset();
+
+            } catch (error) {
+                console.error("Error submitting form:", error);
+                formStatus.className = 'block text-center text-sm p-4 rounded bg-red-950/30 border border-red-900 text-red-400 mt-4';
+                formStatus.textContent = 'There was an error sending your request. Please try again.';
+            } finally {
+                submitBtn.innerHTML = '<span>Send Request</span>';
+                submitBtn.disabled = false;
+                
+                // Hide status after 5 seconds
+                setTimeout(() => {
+                    formStatus.className = 'hidden';
+                }, 5000);
+            }
+        });
+    </script>
+
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        /** 
+         * HOW TO UPDATE YOUR PORTFOLIO:
+         * 
+         * Add new photo objects to the `photoDatabase` array below.
+         * Properties:
+         * - id: Unique number
+         * - src: URL to the image (replace the picsum placeholders with your actual hosted image URLs)
+         * - category: 'Automotive', 'Portrait', 'Landscape', or 'Architectural'
+         * - color: 'Warm', 'Cool', 'Monochrome', 'Vibrant' (Used for filtering)
+         * - date: YYYY-MM-DD format (Used for sorting)
+         * - title: Descriptive title for the photo
+         * - meta: Technical details (e.g., "Canon R5 • 35mm f/1.4")
+         * - isCover: Set to true if this should be the cover image for its category
+         */
+        const photoDatabase = [
+            // Automotive
+            { id: 1, src: 'https://images.unsplash.com/photo-1611016186353-9af58c69a533?q=80&w=2070&auto=format&fit=crop', category: 'Automotive', color: 'Warm', date: '2023-10-12', title: 'Midnight Run', meta: 'Canon R5 • 85mm f/1.2', isCover: true },
+            { id: 2, src: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070&auto=format&fit=crop', category: 'Automotive', color: 'Vibrant', date: '2023-09-05', title: 'Classic Lines', meta: 'Canon EOS R • 50mm f/1.4' },
+            { id: 3, src: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop', category: 'Automotive', color: 'Monochrome', date: '2024-01-20', title: 'Silver Shadow', meta: 'Canon R5 • 35mm f/1.4' },
+            
+            // Portrait
+            { id: 4, src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop', category: 'Portrait', color: 'Warm', date: '2023-11-22', title: 'Golden Hour Silhouette', meta: 'Canon R5 • 85mm f/1.2', isCover: true },
+            { id: 5, src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1974&auto=format&fit=crop', category: 'Portrait', color: 'Cool', date: '2023-12-10', title: 'Studio Contrast', meta: 'Canon R6 • 50mm f/1.8' },
+            { id: 6, src: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1976&auto=format&fit=crop', category: 'Portrait', color: 'Warm', date: '2024-02-14', title: 'Natural Light', meta: 'Canon R5 • 85mm f/1.2' },
+
+            // Landscape
+            { id: 7, src: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2070&auto=format&fit=crop', category: 'Landscape', color: 'Warm', date: '2022-08-15', title: 'Desert Film Simulation', meta: 'Canon R5 • 24mm f/2.8', isCover: true },
+            { id: 8, src: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=2070&auto=format&fit=crop', category: 'Landscape', color: 'Cool', date: '2023-01-05', title: 'Misty Mountains', meta: 'Canon R5 • 70-200mm f/2.8' },
+            { id: 9, src: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2175&auto=format&fit=crop', category: 'Landscape', color: 'Vibrant', date: '2023-07-20', title: 'Valley Glow', meta: 'Canon R6 • 35mm f/1.4' },
+            { id: 10, src: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=2070&auto=format&fit=crop', category: 'Landscape', color: 'Warm', date: '2024-03-01', title: 'Forest Path', meta: 'Canon R5 • 50mm f/1.2' },
+
+            // Architectural
+            { id: 11, src: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop', category: 'Architectural', color: 'Cool', date: '2023-04-18', title: 'Glass & Steel', meta: 'Canon R5 • 15-35mm f/2.8', isCover: true },
+            { id: 12, src: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=2071&auto=format&fit=crop', category: 'Architectural', color: 'Monochrome', date: '2023-06-30', title: 'Brutalist Shadows', meta: 'Canon EOS R • 24mm f/1.8' },
+            { id: 13, src: 'https://images.unsplash.com/photo-1428366890462-dd4baecf492b?q=80&w=1974&auto=format&fit=crop', category: 'Architectural', color: 'Warm', date: '2023-11-05', title: 'City Sunset', meta: 'Canon R6 • 70-200mm f/2.8' }
+        ];
+
+        const categories = ['Automotive', 'Portrait', 'Landscape', 'Architectural'];
+
+        // App State
+        let currentView = 'home';
+        let carouselPhotos = [];
+        let carouselIndex = 0;
+        let isCarouselFullWidth = false;
+
+        // View Navigation
+        function navigateTo(viewId, hash = null) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+                setTimeout(() => el.style.display = 'none', 400); // Wait for fade out
+            });
+
+            // Show target view
+            const target = document.getElementById(`view-${viewId}`);
+            setTimeout(() => {
+                target.style.display = 'block';
+                // Trigger reflow
+                void target.offsetWidth;
+                target.classList.add('active');
+                
+                // Handle scroll
+                if (hash) {
+                    const el = document.getElementById(hash);
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+
+                // Navbar styling adjustments based on view
+                const nav = document.getElementById('navbar');
+                if (viewId === 'home') {
+                    nav.classList.add('mix-blend-difference');
+                    nav.classList.remove('bg-darker/90', 'backdrop-blur');
+                } else {
+                    nav.classList.remove('mix-blend-difference');
+                    nav.classList.add('bg-darker/90', 'backdrop-blur');
+                }
+            }, 400);
+
+            currentView = viewId;
+
+            // Trigger renders
+            if (viewId === 'portfolio') renderCategories();
+            if (viewId === 'all-photos') renderAllPhotos();
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categories-grid');
+            container.innerHTML = '';
+
+            categories.forEach(cat => {
+                // Find cover photo
+                let coverPhoto = photoDatabase.find(p => p.category === cat && p.isCover);
+                if (!coverPhoto) {
+                    // Fallback to first photo in category if no cover is set
+                    coverPhoto = photoDatabase.find(p => p.category === cat) || photoDatabase[0];
+                }
+
+                const catEl = document.createElement('div');
+                catEl.className = 'group relative aspect-[4/3] overflow-hidden cursor-pointer bg-zinc-900 rounded-sm shadow-xl';
+                catEl.onclick = () => openCarouselForCategory(cat);
+                
+                catEl.innerHTML = `
+                    <img src="${coverPhoto.src}" alt="${cat}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-darker via-darker/20 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-8 left-8">
+                        <h3 class="text-2xl font-serif text-white mb-2 tracking-wide">${cat}</h3>
+                        <p class="text-xs uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">
+                            View Collection <i data-lucide="arrow-right" class="inline w-3 h-3 ml-1"></i>
+                        </p>
+                    </div>
+                `;
+                container.appendChild(catEl);
+            });
+            lucide.createIcons();
+        }
+
+        function renderAllPhotos() {
+            const container = document.getElementById('gallery-grid');
+            const noResults = document.getElementById('no-results');
+            
+            // Get filter values
+            const subject = document.getElementById('filter-subject').value;
+            const color = document.getElementById('filter-color').value;
+            const dateSort = document.getElementById('filter-date').value;
+
+            // Filter data
+            let filtered = photoDatabase.filter(p => {
+                if (subject !== 'all' && p.category !== subject) return false;
+                if (color !== 'all' && p.color !== color) return false;
+                return true;
+            });
+
+            // Sort data
+            filtered.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return dateSort === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+
+            // Render
+            container.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+                container.classList.add('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                container.classList.remove('hidden');
+                
+                filtered.forEach((photo, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'masonry-item relative group cursor-pointer img-hover-zoom bg-zinc-900 rounded-sm';
+                    // Open carousel with this specific filtered list, starting at this index
+                    el.onclick = () => openCarousel(filtered, index, 'Archive');
+                    
+                    el.innerHTML = `
+                        <img src="${photo.src}" alt="${photo.title}" loading="lazy" class="w-full h-auto block rounded-sm opacity-90 group-hover:opacity-100">
+                        <div class="absolute inset-0 bg-darker/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                            <h4 class="text-lg font-serif text-white">${photo.title}</h4>
+                            <p class="text-xs text-zinc-400 uppercase tracking-widest mt-1">${photo.category}</p>
+                        </div>
+                    `;
+                    container.appendChild(el);
+                });
+            }
+        }
+
+        // Attach event listeners to filters
+        ['filter-subject', 'filter-color', 'filter-date'].forEach(id => {
+            document.getElementById(id).addEventListener('change', renderAllPhotos);
+        });
+
+
+        function openCarouselForCategory(category) {
+            const photos = photoDatabase.filter(p => p.category === category);
+            openCarousel(photos, 0, category);
+        }
+
+        function openCarousel(photos, startIndex, titleStr) {
+            if (!photos || photos.length === 0) return;
+            
+            carouselPhotos = photos;
+            carouselIndex = startIndex;
+            
+            document.getElementById('carousel-category-title').textContent = titleStr;
+            updateCarouselUI();
+            
+            const modal = document.getElementById('carousel-modal');
+            modal.classList.remove('hidden');
+            // small delay for transition
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            document.body.style.overflow = 'hidden'; // prevent background scrolling
+        }
+
+        function closeCarousel() {
+            const modal = document.getElementById('carousel-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = ''; // restore scrolling
+            }, 300);
+        }
+
+        function updateCarouselUI() {
+            const photo = carouselPhotos[carouselIndex];
+            const imgEl = document.getElementById('carousel-img');
+            
+            // Fade out slightly before changing source for smoothness
+            imgEl.style.opacity = 0;
+            
+            setTimeout(() => {
+                imgEl.src = photo.src;
+                document.getElementById('carousel-title').textContent = photo.title;
+                document.getElementById('carousel-meta').textContent = photo.meta || photo.date;
+                imgEl.style.opacity = 1;
+            }, 150);
+        }
+
+        function nextSlide() {
+            carouselIndex = (carouselIndex + 1) % carouselPhotos.length;
+            updateCarouselUI();
+        }
+
+        function prevSlide() {
+            carouselIndex = (carouselIndex - 1 + carouselPhotos.length) % carouselPhotos.length;
+            updateCarouselUI();
+        }
+
+        // Toggle Full/Half Width
+        document.getElementById('btn-toggle-width').addEventListener('click', () => {
+            isCarouselFullWidth = !isCarouselFullWidth;
+            const container = document.getElementById('carousel-image-container');
+            const icon = document.querySelector('#btn-toggle-width i');
+            
+            if (isCarouselFullWidth) {
+                container.classList.remove('p-4', 'md:p-20');
+                container.classList.add('p-0');
+                icon.setAttribute('data-lucide', 'minimize');
+            } else {
+                container.classList.add('p-4', 'md:p-20');
+                container.classList.remove('p-0');
+                icon.setAttribute('data-lucide', 'maximize');
+            }
+            lucide.createIcons();
+        });
+
+        // Keyboard navigation for carousel
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('carousel-modal');
+            if (!modal.classList.contains('hidden')) {
+                if (e.key === 'Escape') closeCarousel();
+                if (e.key === 'ArrowRight') nextSlide();
+                if (e.key === 'ArrowLeft') prevSlide();
+            }
+        });
+
+    </script>
+</body>
+</html>
