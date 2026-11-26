@@ -260,6 +260,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 figcaption { display: flex; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; }
 figcaption .t { font-weight: 500; }
 figcaption .mono { color: var(--muted); }
+figcaption .award, .tile .meta .award { flex-basis: 100%; color: var(--accent); }
+.lightbox figcaption .award { color: #e3a44c; }
 
 .icon-btn {
   width: 46px; height: 46px; display: grid; place-items: center; cursor: pointer;

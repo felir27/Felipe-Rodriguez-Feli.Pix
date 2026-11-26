@@ -87,6 +87,7 @@
       ["Based in", SITE.location],
       ["Shoots", (SITE.aboutShoots || SUBJECTS).join(", ")],
       ["Archive", years.length ? `${years[0]}–${years[years.length - 1]}` : ""],
+      ["Awards", PHOTOS.filter((p) => p.award).map((p) => `“${p.title}”: ${p.award}`).join("; ")],
     ].filter(([, v]) => v);
     $("#about-facts").replaceChildren(...facts.map(([k, v]) => el("div", {}, el("dt", { text: k }), el("dd", { text: v }))));
 
@@ -211,8 +212,11 @@
     return el("figure", {},
       el("button", { type: "button", class: "open", "aria-label": `Open ${p.title} full screen`, onclick: () => openLightbox(list, list.indexOf(p)) }, imgEl(p, lazy, sizes)),
       el("figcaption", {}, el("span", { class: "t", text: p.title }),
-        el("span", { class: "mono", text: [fmtDate(p.date), exif(p)].filter(Boolean).join(" · ") })));
+        el("span", { class: "mono", text: [fmtDate(p.date), exif(p)].filter(Boolean).join(" · ") }),
+        awardEl(p)));
   }
+  // A photo's award (the `award` field in photos.js), shown in amber under its caption.
+  const awardEl = (p) => p.award ? el("span", { class: "award mono", text: `★ ${p.award}` }) : null;
 
   function renderCategory(slug, kind) {
     const isShoot = kind === "shoot";
@@ -293,7 +297,8 @@
         el("span", { class: "meta" },
           el("span", { class: "t" }, el("span", { class: "dot", style: `background:${COLORS[p.color] || "#888"}` }), p.title),
           el("span", { class: "mono", text: `${fmtDate(p.date)} · ${p.subject}` }),
-          exif(p) ? el("span", { class: "mono exif", text: exif(p) }) : null))));
+          exif(p) ? el("span", { class: "mono exif", text: exif(p) }) : null,
+          awardEl(p)))));
   }
 
   /* ---------- Lightbox ---------- */
@@ -306,7 +311,8 @@
     $("#lb-count").textContent = `${lb + 1} / ${lbList.length}`;
     const cat = p.shoot ? shootBySlug(p.shoot) : catBySlug(p.category);
     $("#lb-cap").replaceChildren(el("span", { class: "t", text: p.title }),
-      el("span", { class: "mono", text: [fmtDate(p.date), cat && cat.name, exif(p)].filter(Boolean).join(" · ") }));
+      el("span", { class: "mono", text: [fmtDate(p.date), cat && cat.name, exif(p)].filter(Boolean).join(" · ") }),
+      awardEl(p) || "");
   }
   function stepLightbox(d) {
     lb = (lb + d + lbList.length) % lbList.length; drawLightbox();
