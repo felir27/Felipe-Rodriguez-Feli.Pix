@@ -167,23 +167,39 @@
 
   /* ---------- Category / shoot: the whole series as a scrolling sequence ---------- */
   // Justified rows: photos in a row share one height and together fill the width, so they tile
-  // with no empty space and none is cropped. A wide "full" photo gets a row to itself; other
-  // photos are grouped until the row is about twice as wide as it is tall (or holds three).
-  function buildRows(list) {
+  // with no empty space and none is cropped. `target` is the screen's usable width / height:
+  // a row whose ratios add up to about that is exactly one screen tall, so each whole photo
+  // fits on screen. Photos are added to a row until it reaches the target.
+  function buildRows(list, target) {
     const rows = [];
-    let cur = [];
-    const sum = (ps) => ps.reduce((s, p) => s + ratioOf(p.src), 0);
-    const flush = () => { if (cur.length) rows.push(cur); cur = []; };
+    let cur = [], s = 0;
     for (const p of list) {
-      if (p.layout === "full" && ratioOf(p.src) >= 1.2) { flush(); rows.push([p]); continue; }
-      cur.push(p);
-      if (sum(cur) >= 1.9 || cur.length === 3) flush();
+      const r = ratioOf(p.src);
+      // Close the row if this photo would overshoot the target by more than the row falls short.
+      if (cur.length && s + r - target > target - s) { rows.push(cur); cur = []; s = 0; }
+      cur.push(p); s += r;
+      if (s >= target) { rows.push(cur); cur = []; s = 0; }
     }
-    // A lone leftover (e.g. one portrait) joins the row before it rather than standing alone.
-    if (cur.length && sum(cur) < 1.2 && rows.length && sum(rows[rows.length - 1]) + sum(cur) <= 3.6) rows[rows.length - 1].push(...cur);
-    else flush();
+    if (cur.length) {
+      // A short leftover joins the row before it if that keeps rows from getting too thin.
+      const prev = rows[rows.length - 1], ps = prev ? prev.reduce((a, p) => a + ratioOf(p.src), 0) : 0;
+      if (prev && s < target * 0.6 && ps + s <= target * 1.6) prev.push(...cur); else rows.push(cur);
+    }
     return rows;
   }
+  // Usable width / height for a row: the content width over the screen height minus the header,
+  // a caption line and some breathing room (kept in step with --row-h in style.css).
+  function rowTarget() {
+    const w = $("#sequence").clientWidth || Math.min(1320, innerWidth);
+    const h = innerHeight - 60 - 96;
+    return Math.max(1.2, w / Math.max(240, h));
+  }
+  let seqState = null;
+  window.addEventListener("resize", () => {
+    if (!seqState || $("#view-category").hidden) return;
+    const t = rowTarget();
+    if (Math.abs(t - seqState.target) / seqState.target > 0.12) renderCategory(seqState.slug, seqState.kind);
+  });
 
   function figure(p, list, lazy, sizes) {
     return el("figure", {},
@@ -206,14 +222,17 @@
     meta.hidden = !isShoot;
     if (isShoot) meta.replaceChildren(...[c.type, fmtMonth(c.date), c.client, c.location].filter(Boolean)
       .map((t, i) => el("span", { class: i === 0 ? "tag" : null, text: t })));
-    $("#sequence").replaceChildren(...(list.length ? buildRows(list).map((row, i) => {
+    const target = rowTarget();
+    seqState = { slug, kind, target };
+    $("#sequence").replaceChildren(...(list.length ? buildRows(list, target).map((row, i) => {
       const total = row.reduce((s, p) => s + ratioOf(p.src), 0);
-      const single = row.length === 1 && total < 1.2; // a lone tall photo: centred, not blown up
-      return el("div", { class: `photo-row seq-row${single ? " single" : ""}`, style: single ? `--r: ${total.toFixed(4)}` : null },
+      // --sum and --n let CSS cap the row's width so its height never exceeds the screen.
+      return el("div", { class: "photo-row seq-row", style: `--sum: ${total.toFixed(4)}; --n: ${row.length}` },
         row.map((p) => {
           const r = ratioOf(p.src);
           const f = figure(p, list, i > 0, `(max-width: 760px) 100vw, ${Math.round(1320 * r / total)}px`);
           f.style.flex = `${r.toFixed(4)} 1 0`;
+          f.style.setProperty("--r", r.toFixed(4));
           return f;
         }));
     }) : [el("p", { class: "empty", text: "No photos here yet." })]));
