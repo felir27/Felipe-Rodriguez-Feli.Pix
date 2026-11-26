@@ -23,7 +23,13 @@
   const catBySlug = (slug) => CATEGORIES.find((c) => c.slug === slug);
   const shootBySlug = (slug) => SHOOT_LIST.find((c) => c.slug === slug);
   const photosIn = (slug) => PHOTOS.filter((p) => p.category === slug);
-  const photosInShoot = (slug) => PHOTOS.filter((p) => p.shoot === slug);
+  // A shoot opens on its cover photo, then the rest newest first.
+  // (A photo can be in a series via `category` and in a shoot via `shoot` at the same time.)
+  const photosInShoot = (slug) => {
+    const cover = (SHOOT_LIST.find((s) => s.slug === slug) || {}).cover;
+    return PHOTOS.filter((p) => p.shoot === slug)
+      .sort((a, b) => (b.src === cover) - (a.src === cover) || b.date.localeCompare(a.date));
+  };
   const fmtMonth = (iso) => {
     const d = new Date((iso || "") + "T12:00:00");
     return isNaN(d) ? (iso || "") : d.toLocaleDateString("en-US", { month: "long", year: "numeric" });

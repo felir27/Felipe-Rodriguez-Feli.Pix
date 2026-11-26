@@ -43,9 +43,9 @@ const CATEGORIES = [
 ];
 
 const SHOOTS = [
-  { slug: "hytech-team", name: "HyTech Racing Team Portraits", client: "HyTech Racing", type: "Team photos",
-    date: "2026-10-14", location: "Georgia Tech", cover: "images/hytech-mech.jpg",
-    blurb: "Sub-team portraits with the HT11 car for the team's 'Meet the Leads' series." },
+  { slug: "hytech-team", name: "HyTech Racing", client: "HyTech Racing", type: "Team & motorsport",
+    date: "2026-10-14", location: "Georgia Tech & Kennesaw, GA", cover: "images/hytech-mech.jpg",
+    blurb: "Sub-team portraits with the HT11 car for the team's 'Meet the Leads' series, plus drivers and the car at testing in Kennesaw and on campus." },
   { slug: "live-show", name: "Live Show", client: "Live band", type: "Event",
     date: "2026-08-15", location: "Miami, FL", cover: "images/drummer.jpg",
     blurb: "Stage coverage of a live set, shot under colored stage light." },
@@ -71,10 +71,10 @@ const PHOTOS = [
   {"src": "images/cafe.jpg", "title": "Café du Théâtre", "category": "street", "subject": "street", "color": "orange", "date": "2026-06-18", "layout": "full", "settings": "Paris, France"},
   {"src": "images/cyclist.jpg", "title": "Evening commute", "category": "street", "subject": "street", "color": "yellow", "date": "2025-07-14", "layout": "full", "settings": "London, UK"},
   {"src": "images/winged-victory.jpg", "title": "Victory, from the crowd", "category": "street", "subject": "architectural", "color": "yellow", "date": "2026-06-18", "layout": "half", "settings": "Musée du Louvre, Paris"},
-  {"src": "images/helmet-glove.jpg", "title": "Thumbs up", "category": "motion", "subject": "motorsport", "color": "red", "date": "2026-04-13", "layout": "half", "settings": "Kennesaw, GA"},
-  {"src": "images/backlit-driver.jpg", "title": "Lights out", "category": "motion", "subject": "motorsport", "color": "orange", "date": "2026-04-13", "layout": "half", "settings": "Kennesaw, GA"},
-  {"src": "images/gt-car.jpg", "title": "In the car", "category": "motion", "subject": "motorsport", "color": "neutral", "date": "2026-05-04", "layout": "half", "settings": "Georgia Tech"},
-  {"src": "images/zoom-burst.jpg", "title": "Zoom burst", "category": "motion", "subject": "motorsport", "color": "blue", "date": "2026-04-13", "layout": "half", "settings": "Kennesaw, GA"},
+  {"src": "images/helmet-glove.jpg", "title": "Thumbs up", "category": "motion", "shoot": "hytech-team", "subject": "motorsport", "color": "red", "date": "2026-04-13", "layout": "half", "settings": "Kennesaw, GA"},
+  {"src": "images/backlit-driver.jpg", "title": "Lights out", "category": "motion", "shoot": "hytech-team", "subject": "motorsport", "color": "orange", "date": "2026-04-13", "layout": "half", "settings": "Kennesaw, GA"},
+  {"src": "images/gt-car.jpg", "title": "In the car", "category": "motion", "shoot": "hytech-team", "subject": "motorsport", "color": "neutral", "date": "2026-05-04", "layout": "half", "settings": "Georgia Tech"},
+  {"src": "images/zoom-burst.jpg", "title": "Zoom burst", "category": "motion", "shoot": "hytech-team", "subject": "motorsport", "color": "blue", "date": "2026-04-13", "layout": "half", "settings": "Kennesaw, GA"},
   {"src": "images/f40.jpg", "title": "F40, front corner", "category": "motion", "subject": "motorsport", "color": "red", "date": "2026-04-05", "layout": "half", "settings": "Georgia Tech"},
   {"src": "images/f40-side.jpg", "title": "F40, side profile", "category": "motion", "subject": "motorsport", "color": "red", "date": "2026-04-05", "layout": "full", "settings": "Georgia Tech"},
   {"src": "images/snowboarder.jpg", "title": "Through the snow guns", "category": "motion", "subject": "sport", "color": "neutral", "date": "2026-01-19", "layout": "half"},
