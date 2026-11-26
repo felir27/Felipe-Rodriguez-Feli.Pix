@@ -189,8 +189,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   transition: border-color 0.2s;
 }
 .all-box:hover { border-color: var(--accent); }
-.all-box .stack { display: flex; }
-.all-box .stack img { width: auto; height: 40px; box-shadow: 0 0 0 2px var(--surface); }
+/* The thumbnail strip never shrinks (phone Safari squeezed it and the photos spilled over the
+   text); thumbnails keep their own shape at 40px tall, and the text takes the remaining width. */
+.all-box .stack { display: flex; flex: none; }
+.all-box .stack img { flex: none; width: auto; max-width: none; height: 40px; box-shadow: 0 0 0 2px var(--surface); }
+.all-box > span:nth-child(2) { flex: 1 1 auto; min-width: 0; }
 .all-box .stack img + img { margin-left: -14px; }
 .all-box strong { font-weight: 600; display: block; line-height: 1.2; }
 .all-box .mono { color: var(--muted); }
