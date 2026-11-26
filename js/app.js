@@ -28,7 +28,21 @@
     const d = new Date((iso || "") + "T12:00:00");
     return isNaN(d) ? (iso || "") : d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
   };
-  const imgEl = (p, lazy = true) => el("img", { src: p.src, alt: p.title || "", loading: lazy ? "lazy" : null, decoding: "async" });
+  /* Responsive images: js/sizes.js (made by tools/resize.mjs) lists each photo's size and its smaller copies.
+     A photo missing from it still works; it just loads the full file. */
+  const SIZE_MAP = typeof SIZES !== "undefined" ? SIZES : {};
+  const STEPS = typeof SIZE_STEPS !== "undefined" ? SIZE_STEPS : [];
+  function imgAttrs(src, sizes) {
+    const dim = SIZE_MAP[src];
+    if (!dim) return { src };
+    const [w, h] = dim;
+    const name = src.replace(/^images\//, "");
+    const set = STEPS.filter((s) => s < w).map((s) => `images/${s}/${name} ${s}w`).concat(`${src} ${w}w`).join(", ");
+    return { src, srcset: set, sizes: sizes || "100vw", width: w, height: h };
+  }
+  const img = (src, alt, sizes, lazy = true) => el("img", { ...imgAttrs(src, sizes), alt: alt || "", loading: lazy ? "lazy" : null, decoding: "async" });
+  const setImg = (node, src, sizes) => { const a = imgAttrs(src, sizes); ["srcset", "sizes", "width", "height"].forEach((k) => a[k] ? node.setAttribute(k, a[k]) : node.removeAttribute(k)); node.src = src; };
+  const imgEl = (p, lazy = true, sizes) => img(p.src, p.title, sizes, lazy);
 
   /* ---------- Static site text ---------- */
   function fillSite() {
@@ -39,15 +53,16 @@
     set("first", first);
     set("initials", initials);
     set("tagline-line", [SITE.tagline, SITE.location].filter(Boolean).join(" · "));
+    set("pitch", SITE.pitch || "");
 
-    $("#hero-img").src = SITE.heroImage;
+    setImg($("#hero-img"), SITE.heroImage, "100vw");
     const heroPhoto = PHOTOS.find((p) => p.src === SITE.heroImage);
     $("#hero-caption").textContent = heroPhoto ? heroPhoto.title : "";
     $("#hero-count").textContent = `${PHOTOS.length} photos · ${CATEGORIES.length} series` + (SHOOT_LIST.length ? ` · ${SHOOT_LIST.length} shoots` : "");
 
     $("#about-text").replaceChildren(...SITE.about.map((t) => el("p", { text: t })));
     const portrait = PHOTOS.find((p) => p.subject === "portrait" && p.layout === "half") || PHOTOS[0];
-    if (SITE.aboutImage || portrait) { $("#about-img").src = SITE.aboutImage || portrait.src; }
+    if (SITE.aboutImage || portrait) setImg($("#about-img"), SITE.aboutImage || portrait.src, "(max-width: 820px) 100vw, 400px");
     const years = PHOTOS.map((p) => p.date.slice(0, 4)).sort();
     const facts = [
       ["Based in", SITE.location],
@@ -56,6 +71,7 @@
     ].filter(([, v]) => v);
     $("#about-facts").replaceChildren(...facts.map(([k, v]) => el("div", {}, el("dt", { text: k }), el("dd", { text: v }))));
 
+    if (!SITE.formEndpoint) $("#f-submit").textContent = "Email this request";
     $("#f-type").replaceChildren(...SITE.requestTypes.map((t) => el("option", { text: t, value: t })));
     $("#contact-email").textContent = SITE.email;
     if (SITE.instagram) { const ig = $("#contact-ig"); ig.href = SITE.instagram; ig.hidden = false; }
@@ -82,7 +98,15 @@
       const bad = [...form.querySelectorAll("[required]")].find((f) => !f.value.trim() || !f.checkValidity());
       if (bad) { status.textContent = `Please fill in “${form.querySelector(`label[for="${bad.id}"]`).textContent}”.`; bad.focus(); return; }
       if (!SITE.formEndpoint) {
-        status.textContent = `The form isn't connected yet. Email ${SITE.email} directly for now.`;
+        // No form service set up: hand the request to the visitor's email app, filled in.
+        const v = (n) => (form.elements[n].value || "").trim();
+        const body = [
+          `Name: ${v("name")}`, `Email: ${v("email")}`, `Type of request: ${v("request_type")}`,
+          v("preferred_date") ? `Preferred date: ${v("preferred_date")}` : "", "", v("message"),
+        ].filter((l, i) => l || i > 3).join("\n");
+        location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(`Photo request: ${v("request_type")}`)}&body=${encodeURIComponent(body)}`;
+        status.className = "form-status ok";
+        status.textContent = `Your email app should open with this request filled in; press Send there. If nothing opened, email ${SITE.email}.`;
         return;
       }
       btn.disabled = true; status.textContent = "Sending…";
@@ -100,12 +124,12 @@
 
   /* ---------- Portfolio (category covers) ---------- */
   function renderPortfolio() {
-    $("#all-box-stack").replaceChildren(...PHOTOS.slice(0, 4).map((p) => el("img", { src: p.src, alt: "", loading: "lazy" })));
+    $("#all-box-stack").replaceChildren(...PHOTOS.slice(0, 4).map((p) => img(p.src, "", "40px")));
     $("#all-box-count").textContent = ` ${PHOTOS.length} photos, filter by subject, color and date`;
-    $("#cats").replaceChildren(...CATEGORIES.map((c) => {
+    $("#cats").replaceChildren(...CATEGORIES.map((c, i) => {
       const n = photosIn(c.slug).length;
       return el("a", { class: "cat", href: `#cat-${c.slug}` },
-        el("img", { src: c.cover || (photosIn(c.slug)[0] || {}).src, alt: "", loading: "lazy" }),
+        img(c.cover || (photosIn(c.slug)[0] || {}).src, "", i === 0 ? "(max-width: 760px) 100vw, 880px" : "(max-width: 760px) 100vw, 440px"),
         el("div", { class: "cat-label" },
           el("h2", { text: c.name }),
           el("span", { class: "mono", text: `${String(n).padStart(2, "0")} photos →` })));
@@ -116,48 +140,37 @@
     $("#shoot-grid").replaceChildren(...SHOOT_LIST.map((sh) => {
       const ph = photosInShoot(sh.slug);
       return el("a", { class: "shoot", href: `#shoot-${sh.slug}` },
-        el("span", { class: "frame" }, el("img", { src: sh.cover || (ph[0] || {}).src, alt: "", loading: "lazy" })),
+        el("span", { class: "frame" }, img(sh.cover || (ph[0] || {}).src, "", "(max-width: 700px) 100vw, 440px")),
         el("span", { class: "row mono" }, el("span", { class: "tag", text: sh.type || "" }), el("span", { text: fmtMonth(sh.date) })),
         el("h3", { text: sh.name }),
         el("p", { class: "client", text: [sh.client, sh.location].filter(Boolean).join(" · ") }));
     }));
   }
 
-  /* ---------- Category carousel ---------- */
-  const car = { slides: [], i: 0, slug: null };
-  const narrow = () => window.matchMedia("(max-width: 900px), (max-height: 500px)").matches;
-
-  function buildSlides(list) {
-    // Two "half" photos in a row share a slide (unless the screen is narrow).
+  /* ---------- Category / shoot: the whole series as a scrolling sequence ---------- */
+  function buildRows(list) {
+    // Two "half" photos in a row sit side by side (CSS stacks them on narrow screens).
     const out = [];
     for (let k = 0; k < list.length; k++) {
-      const p = list[k];
-      if (p.layout === "half" && !narrow()) {
-        const q = list[k + 1];
-        if (q && q.layout === "half") { out.push({ kind: "pair", photos: [p, q] }); k++; }
-        else out.push({ kind: "single-half", photos: [p] });
-      } else out.push({ kind: p.layout === "half" ? "single-half" : "full", photos: [p] });
+      const p = list[k], q = list[k + 1];
+      if (p.layout === "half" && q && q.layout === "half") { out.push({ kind: "pair", photos: [p, q] }); k++; }
+      else out.push({ kind: p.layout === "half" ? "single-half" : "full", photos: [p] });
     }
     return out;
   }
 
-  function figure(p, lazy) {
-    return el("figure", {}, imgEl(p, lazy),
+  function figure(p, list, lazy, sizes) {
+    return el("figure", {},
+      el("button", { type: "button", class: "open", "aria-label": `Open ${p.title} full screen`, onclick: () => openLightbox(list, list.indexOf(p)) }, imgEl(p, lazy, sizes)),
       el("figcaption", {}, el("span", { class: "t", text: p.title }),
         el("span", { class: "mono", text: [fmtDate(p.date), exif(p)].filter(Boolean).join(" · ") })));
   }
 
-  function renderCategory(slug, keepIndex, kind) {
-    kind = kind || car.kind || "cat";
+  function renderCategory(slug, kind) {
     const isShoot = kind === "shoot";
     const c = isShoot ? shootBySlug(slug) : catBySlug(slug);
     if (!c) { location.hash = isShoot ? "shoots" : "portfolio"; return; }
-    car.kind = kind;
     const list = isShoot ? photosInShoot(slug) : photosIn(slug);
-    const prevPhoto = keepIndex && car.slides[car.i] ? car.slides[car.i].photos[0] : null;
-    car.slug = slug;
-    car.slides = buildSlides(list);
-    car.i = prevPhoto ? Math.max(0, car.slides.findIndex((s) => s.photos.includes(prevPhoto))) : 0;
     $("#cat-title").textContent = c.name;
     $("#cat-blurb").textContent = c.blurb || "";
     const back = $("#cat-back");
@@ -167,49 +180,15 @@
     meta.hidden = !isShoot;
     if (isShoot) meta.replaceChildren(...[c.type, fmtMonth(c.date), c.client, c.location].filter(Boolean)
       .map((t, i) => el("span", { class: i === 0 ? "tag" : null, text: t })));
-    $("#thumbs").replaceChildren(...car.slides.map((s, idx) =>
-      el("button", { type: "button", "aria-label": `Slide ${idx + 1}: ${s.photos.map((p) => p.title).join(" and ")}`, onclick: () => go(idx) },
-        s.photos.map((p) => el("img", { src: p.src, alt: "", loading: "lazy" })))));
+    const sizesFor = { full: "(max-width: 1368px) 100vw, 1320px", pair: "(max-width: 900px) 100vw, 660px", "single-half": "(max-width: 900px) 100vw, 660px" };
+    $("#sequence").replaceChildren(...(list.length ? buildRows(list).map((r, i) =>
+      el("div", { class: `row ${r.kind}` }, r.photos.map((p) => figure(p, list, i > 0, sizesFor[r.kind]))))
+      : [el("p", { class: "empty", text: "No photos here yet." })]));
     const group = isShoot ? SHOOT_LIST : CATEGORIES;
     const ci = group.indexOf(c), nxt = group[(ci + 1) % group.length];
     const nl = $("#cat-next-link");
     nl.hidden = group.length < 2;
     nl.href = `#${isShoot ? "shoot" : "cat"}-${nxt.slug}`; nl.textContent = `Next: ${nxt.name} →`;
-    showSlide();
-  }
-
-  function showSlide() {
-    const s = car.slides[car.i];
-    if (!s) { $("#stage").replaceChildren(el("p", { class: "empty", text: "No photos here yet." })); $("#counter").textContent = ""; return; }
-    $("#stage").replaceChildren(el("div", { class: `slide ${s.kind}` }, s.photos.map((p) => figure(p, false))));
-    $("#counter").textContent = `${String(car.i + 1).padStart(2, "0")} / ${String(car.slides.length).padStart(2, "0")}`;
-    [...$("#thumbs").children].forEach((b, idx) => b.setAttribute("aria-current", idx === car.i ? "true" : "false"));
-    const cur = $("#thumbs").children[car.i];
-    if (cur) { const t = $("#thumbs"); t.scrollTo({ left: cur.offsetLeft - t.clientWidth / 2 + cur.clientWidth / 2, behavior: "smooth" }); }
-    // preload neighbours
-    [car.i + 1, car.i - 1].forEach((j) => { const n = car.slides[(j + car.slides.length) % car.slides.length]; n && n.photos.forEach((p) => { new Image().src = p.src; }); });
-  }
-  function go(idx) {
-    if (!car.slides.length) return;
-    car.i = (idx + car.slides.length) % car.slides.length;
-    showSlide();
-  }
-
-  function setupCarousel() {
-    $("#prev").addEventListener("click", () => go(car.i - 1));
-    $("#next").addEventListener("click", () => go(car.i + 1));
-    let x0 = null;
-    const stage = $("#stage");
-    stage.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
-    stage.addEventListener("touchend", (e) => {
-      if (x0 == null) return;
-      const dx = e.changedTouches[0].clientX - x0; x0 = null;
-      if (Math.abs(dx) > 40) go(car.i + (dx < 0 ? 1 : -1));
-    });
-    let wasNarrow = narrow();
-    window.addEventListener("resize", () => {
-      if (narrow() !== wasNarrow) { wasNarrow = narrow(); if (car.slug && !$("#view-category").hidden) renderCategory(car.slug, true); }
-    });
   }
 
   /* ---------- All photos (filters + grid) ---------- */
@@ -251,8 +230,8 @@
     $("#result-count").textContent = `${filtered.length} of ${PHOTOS.length} photos`;
     $("#grid-empty").hidden = filtered.length > 0;
     $("#grid").replaceChildren(...filtered.map((p, idx) =>
-      el("button", { type: "button", class: "tile", "aria-label": `Open ${p.title}`, onclick: () => openLightbox(idx) },
-        imgEl(p),
+      el("button", { type: "button", class: "tile", "aria-label": `Open ${p.title}`, onclick: () => openLightbox(filtered, idx) },
+        imgEl(p, true, "(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 440px"),
         el("span", { class: "meta" },
           el("span", { class: "t" }, el("span", { class: "dot", style: `background:${COLORS[p.color] || "#888"}` }), p.title),
           el("span", { class: "mono", text: `${fmtDate(p.date)} · ${p.subject}` }),
@@ -260,18 +239,23 @@
   }
 
   /* ---------- Lightbox ---------- */
-  let lb = 0, lastFocus = null;
-  function openLightbox(idx) { lastFocus = document.activeElement; lb = idx; $("#lightbox").hidden = false; document.body.style.overflow = "hidden"; drawLightbox(); $("#lb-close").focus(); }
+  let lb = 0, lbList = [], lastFocus = null;
+  function openLightbox(list, idx) { lastFocus = document.activeElement; lbList = list; lb = idx; $("#lightbox").hidden = false; document.body.style.overflow = "hidden"; drawLightbox(); $("#lb-close").focus(); }
   function closeLightbox() { $("#lightbox").hidden = true; document.body.style.overflow = ""; lastFocus && lastFocus.focus(); }
   function drawLightbox() {
-    const p = filtered[lb]; if (!p) return closeLightbox();
-    $("#lb-img").src = p.src; $("#lb-img").alt = p.title;
-    $("#lb-count").textContent = `${lb + 1} / ${filtered.length}`;
+    const p = lbList[lb]; if (!p) return closeLightbox();
+    setImg($("#lb-img"), p.src, "100vw"); $("#lb-img").alt = p.title;
+    $("#lb-count").textContent = `${lb + 1} / ${lbList.length}`;
     const cat = p.shoot ? shootBySlug(p.shoot) : catBySlug(p.category);
     $("#lb-cap").replaceChildren(el("span", { class: "t", text: p.title }),
       el("span", { class: "mono", text: [fmtDate(p.date), cat && cat.name, exif(p)].filter(Boolean).join(" · ") }));
   }
-  function stepLightbox(d) { lb = (lb + d + filtered.length) % filtered.length; drawLightbox(); }
+  function stepLightbox(d) {
+    lb = (lb + d + lbList.length) % lbList.length; drawLightbox();
+    // Warm the next photo in the same direction so stepping feels instant.
+    const n = lbList[(lb + d + lbList.length) % lbList.length];
+    if (n) { const pre = new Image(), a = imgAttrs(n.src, "100vw"); if (a.srcset) { pre.sizes = a.sizes; pre.srcset = a.srcset; } pre.src = n.src; }
+  }
   function setupLightbox() {
     $("#lb-close").addEventListener("click", closeLightbox);
     $("#lb-prev").addEventListener("click", () => stepLightbox(-1));
@@ -288,10 +272,6 @@
       if (e.key === "ArrowRight") stepLightbox(1);
       return;
     }
-    if (!$("#view-category").hidden) {
-      if (e.key === "ArrowLeft") go(car.i - 1);
-      if (e.key === "ArrowRight") go(car.i + 1);
-    }
   });
 
   /* ---------- Routing (hash based, works on GitHub Pages) ---------- */
@@ -304,8 +284,8 @@
     let active = "";
     if (h === "portfolio") { show("portfolio"); active = "portfolio"; window.scrollTo(0, 0); }
     else if (h === "all") { show("all"); active = "all"; window.scrollTo(0, 0); }
-    else if (h.startsWith("cat-")) { show("category"); active = "portfolio"; renderCategory(h.slice(4), false, "cat"); window.scrollTo(0, 0); }
-    else if (h.startsWith("shoot-")) { show("category"); active = "shoots"; renderCategory(h.slice(6), false, "shoot"); window.scrollTo(0, 0); }
+    else if (h.startsWith("cat-")) { show("category"); active = "portfolio"; renderCategory(h.slice(4), "cat"); window.scrollTo(0, 0); }
+    else if (h.startsWith("shoot-")) { show("category"); active = "shoots"; renderCategory(h.slice(6), "shoot"); window.scrollTo(0, 0); }
     else if (h === "shoots") {
       const wasHidden = $("#view-portfolio").hidden;
       show("portfolio"); active = "shoots";
@@ -388,7 +368,6 @@
   fillSite();
   setupForm();
   renderPortfolio();
-  setupCarousel();
   setupFilters();
   setupLightbox();
   setupMenu();

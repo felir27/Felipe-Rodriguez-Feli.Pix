@@ -3,6 +3,7 @@
 const SITE = {
   name: "Felipe Rodriguez",
   tagline: "Photography",
+  pitch: "Headshots, events, team and graduation photos in Miami and Atlanta.",
   heroImage: "images/paddle-sunset.jpg",
   aboutImage: "images/backlit-driver.jpg",
   location: "Miami & Atlanta",
@@ -13,9 +14,9 @@ const SITE = {
   about: [
     "I'm Felipe, a mechanical engineering student at Georgia Tech. I live in Miami and go to school in Atlanta.",
     "Outside of class I'm on HyTech Racing, Georgia Tech's Formula SAE Electric team, and I travel with a camera whenever I can.",
-    "I take on client work in both cities, including headshots, event photography, graduation shoots and more. If you're based in Miami or Atlanta, give me a call and we can set something up.",
+    "I take on client work in both cities, including headshots, event photography, graduation shoots and more. If you're based in Miami or Atlanta, send me a request below and we can set something up.",
   ],
-  aboutShoots: ["Automotive", "Portrait", "Client work", "Travel"],
+  aboutShoots: ["Headshots", "Events", "Team photos", "Graduation", "Automotive"],
 
   shootsIntro: "Shoots I've done for clients and teams: portraits, team photos and live events, photographed to a brief rather than for fun. If you'd like something similar, get in touch.",
 
