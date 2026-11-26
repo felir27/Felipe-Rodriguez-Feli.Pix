@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Felipe Rodriguez | Photography</title>
+<meta name="description" content="Photography by Felipe Rodriguez: travel, street, motorsport and client work in Miami and Atlanta.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}</script>
+</head>
+<body>
+
+
+<header class="site-header" id="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="#home"><span class="full" data-site="name"></span><span class="short" data-site="initials"></span></a>
+    <div class="header-right">
+      <nav class="nav" id="nav" aria-label="Main">
+        <a href="#portfolio" data-nav="portfolio">Portfolio</a>
+        <a href="#shoots" data-nav="shoots">Past shoots</a>
+        <a href="#all" data-nav="all">All photos</a>
+        <a href="#about" data-nav="about">About</a>
+        <a href="#contact" data-nav="contact">Contact</a>
+      </nav>
+      <button class="theme-switch" id="theme-toggle" type="button" role="switch" aria-checked="true" aria-label="Dark mode" title="Switch light / dark">
+        <svg class="ico sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+        <span class="track"><span class="thumb"></span></span>
+        <svg class="ico moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z"/></svg>
+      </button>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    </div>
+  </div>
+</header>
+
+<main id="app">
+  <!-- HOME: banner, about, contact -->
+  <section class="view" id="view-home" aria-label="Home">
+    <div class="hero">
+      <img id="hero-img" alt="">
+      <div class="hero-meta mono" aria-hidden="true">
+        <span id="hero-caption"></span>
+        <span id="hero-count"></span>
+      </div>
+      <div class="hero-inner">
+        <p class="eyebrow" data-site="tagline-line"></p>
+        <h1 data-site="name"></h1>
+        <a class="btn-photo" href="#portfolio">View portfolio <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <section class="section" id="about">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow">About</p>
+          <h2>Hi, I'm <span data-site="first"></span>.</h2>
+        </div>
+        <div class="about-body">
+          <div>
+            <div id="about-text"></div>
+            <dl class="facts" id="about-facts"></dl>
+          </div>
+          <figure><img id="about-img" alt="" loading="lazy"></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2>Book a shoot or ask a question.</h2>
+          <p class="page-intro">Tell me what you have in mind and I'll get back to you within a couple of days.</p>
+        </div>
+        <div>
+          <form class="form" id="contact-form" novalidate>
+            <div class="field">
+              <label for="f-name">Name</label>
+              <input id="f-name" name="name" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="f-email">Email</label>
+              <input id="f-email" name="email" type="email" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="f-type">Type of request</label>
+              <select id="f-type" name="request_type"></select>
+            </div>
+            <div class="field">
+              <label for="f-date">Preferred date (optional)</label>
+              <input id="f-date" name="preferred_date" type="date">
+            </div>
+            <div class="field wide">
+              <label for="f-msg">Details</label>
+              <textarea id="f-msg" name="message" required placeholder="Location, what you'd like photographed, how you'll use the photos…"></textarea>
+            </div>
+            <div class="form-actions wide">
+              <button class="btn" type="submit" id="f-submit">Send request</button>
+              <p class="form-status" id="f-status" role="status"></p>
+            </div>
+          </form>
+          <div class="contact-direct mono">
+            <span>Or email</span>
+            <span class="addr" id="contact-email"></span>
+            <button class="linkish" type="button" id="copy-email">Copy</button>
+            <a id="contact-ig" class="linkish" target="_blank" rel="noopener" hidden>Instagram ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- PORTFOLIO: category covers -->
+  <section class="view page-top" id="view-portfolio" aria-label="Portfolio" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Portfolio</p>
+      <h1 class="page-title">Selected work</h1>
+      <a class="all-box" href="#all">
+        <span class="stack" id="all-box-stack"></span>
+        <span><strong>All photos</strong><span class="mono" id="all-box-count"></span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <div class="cats" id="cats"></div>
+
+      <section class="shoots" id="shoots" aria-labelledby="shoots-title">
+        <div class="shoots-head">
+          <div>
+            <p class="eyebrow">Client work</p>
+            <h2 class="page-title" id="shoots-title">Past shoots</h2>
+          </div>
+          <p class="page-intro" id="shoots-intro"></p>
+        </div>
+        <div class="shoot-grid" id="shoot-grid"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- CATEGORY: carousel -->
+  <section class="view page-top" id="view-category" aria-label="Category" hidden>
+    <div class="wrap">
+      <a class="back mono" id="cat-back" href="#portfolio">← Portfolio</a>
+      <h1 class="page-title" id="cat-title"></h1>
+      <p class="shoot-meta mono" id="cat-meta" hidden></p>
+      <p class="page-intro" id="cat-blurb"></p>
+      <div class="carousel" id="carousel" tabindex="-1" aria-roledescription="carousel">
+        <div class="stage" id="stage" aria-live="polite"></div>
+        <div class="car-controls">
+          <span class="mono counter" id="counter"></span>
+          <div class="car-btns">
+            <button class="icon-btn" id="prev" type="button" aria-label="Previous">←</button>
+            <button class="icon-btn" id="next" type="button" aria-label="Next">→</button>
+          </div>
+        </div>
+        <div class="thumbs" id="thumbs" aria-label="Jump to photo"></div>
+      </div>
+      <div class="cat-next"><a class="back mono" id="cat-next-link"></a></div>
+    </div>
+  </section>
+
+  <!-- ALL PHOTOS: filterable grid -->
+  <section class="view page-top" id="view-all" aria-label="All photos" hidden>
+    <div class="wrap">
+      <a class="back mono" href="#portfolio">← Portfolio</a>
+      <h1 class="page-title">All photos</h1>
+      <div class="filters">
+        <div class="filter-row" id="flt-subject"><span class="eyebrow">Subject</span></div>
+        <div class="filter-row" id="flt-color"><span class="eyebrow">Color</span></div>
+        <div class="filter-row">
+          <span class="eyebrow">Date</span>
+          <select class="select" id="flt-year" aria-label="Year taken"></select>
+          <select class="select" id="flt-sort" aria-label="Sort order">
+            <option value="new">Newest first</option>
+            <option value="old">Oldest first</option>
+          </select>
+        </div>
+      </div>
+      <div class="results-bar">
+        <span class="mono" id="result-count"></span>
+        <button class="linkish" type="button" id="clear-filters">Clear filters</button>
+      </div>
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="grid-empty" hidden>No photos match these filters.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap site-footer mono">
+  <span id="footer-copy"></span>
+  <a href="#home">Back to top ↑</a>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="top">
+    <span class="mono" id="lb-count"></span>
+    <button class="icon-btn" id="lb-close" type="button" aria-label="Close">✕</button>
+  </div>
+  <div class="img-wrap">
+    <img id="lb-img" alt="">
+    <button class="icon-btn nav-l" id="lb-prev" type="button" aria-label="Previous">←</button>
+    <button class="icon-btn nav-r" id="lb-next" type="button" aria-label="Next">→</button>
+  </div>
+  <figcaption id="lb-cap"></figcaption>
+</div>
+
+<script src="js/photos.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
