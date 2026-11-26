@@ -196,13 +196,23 @@
   }
   // Usable width / height for a row: the content width over the screen height minus the header,
   // a caption line and some breathing room (kept in step with --row-h in style.css).
+  // The screen height every "fit the whole photo on screen" size is based on. Phones change
+  // innerHeight while scrolling (the address bar hides and shows), which made photos resize
+  // mid-scroll, so on touch screens it's measured once and only updated when the width changes
+  // (rotation). Mouse/trackpad screens follow every window resize. CSS reads it as --screen-h.
+  const touchScreen = matchMedia("(hover: none)").matches;
+  let screenH = innerHeight, screenW = innerWidth;
+  const applyScreenH = () => document.documentElement.style.setProperty("--screen-h", `${screenH}px`);
+  applyScreenH();
   function rowTarget() {
     const w = $("#sequence").clientWidth || Math.min(1320, innerWidth);
-    const h = innerHeight - 60 - 96;
+    const h = screenH - 60 - 96;
     return Math.max(1.2, w / Math.max(240, h));
   }
   let seqState = null;
   window.addEventListener("resize", () => {
+    if (touchScreen && innerWidth === screenW) return; // only the address bar moved: keep everything still
+    screenW = innerWidth; screenH = innerHeight; applyScreenH();
     if (!seqState || $("#view-category").hidden) return;
     const t = rowTarget();
     if (Math.abs(t - seqState.target) / seqState.target > 0.12) renderCategory(seqState.slug, seqState.kind);

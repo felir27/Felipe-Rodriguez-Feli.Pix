@@ -240,7 +240,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
    (app.js uses the same numbers to group rows). Capping a row's width at sum-of-ratios x
    --row-h keeps every whole photo on screen; a capped row is centred. */
 .sequence {
-  --row-h: calc(100svh - var(--header-h) - 96px); --seq-gap: clamp(10px, 1.4vw, 18px);
+  --row-h: calc(var(--screen-h, 100svh) - var(--header-h) - 96px); --seq-gap: clamp(10px, 1.4vw, 18px);
   display: grid; gap: clamp(18px, 2.4vw, 32px); margin-top: clamp(32px, 5vw, 56px);
 }
 .sequence .seq-row {
@@ -290,7 +290,7 @@ figcaption .award, .tile .meta .award { flex-basis: 100%; color: var(--accent); 
 .grid { columns: 3 300px; column-gap: 14px; padding-bottom: 96px; }
 .tile { break-inside: avoid; margin: 0 0 14px; position: relative; cursor: zoom-in; display: block; width: 100%; padding: 0; border: 0; background: var(--surface); text-align: left; }
 /* A very tall photo is capped at the screen height (narrower, never cropped) so it fits whole. */
-.tile img { width: auto; max-width: 100%; height: auto; max-height: calc(100svh - var(--header-h) - 48px); margin-inline: auto; }
+.tile img { width: auto; max-width: 100%; height: auto; max-height: calc(var(--screen-h, 100svh) - var(--header-h) - 48px); margin-inline: auto; }
 .tile:has(img[height]) { background: transparent; }
 .tile .meta {
   position: absolute; inset: auto 0 0 0; padding: 40px 14px 12px; color: var(--on-photo);
