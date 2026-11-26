@@ -166,15 +166,23 @@
   }
 
   /* ---------- Category / shoot: the whole series as a scrolling sequence ---------- */
+  // Justified rows: photos in a row share one height and together fill the width, so they tile
+  // with no empty space and none is cropped. A wide "full" photo gets a row to itself; other
+  // photos are grouped until the row is about twice as wide as it is tall (or holds three).
   function buildRows(list) {
-    // Two "half" photos in a row sit side by side (CSS stacks them on narrow screens).
-    const out = [];
-    for (let k = 0; k < list.length; k++) {
-      const p = list[k], q = list[k + 1];
-      if (p.layout === "half" && q && q.layout === "half") { out.push({ kind: "pair", photos: [p, q] }); k++; }
-      else out.push({ kind: p.layout === "half" ? "single-half" : "full", photos: [p] });
+    const rows = [];
+    let cur = [];
+    const sum = (ps) => ps.reduce((s, p) => s + ratioOf(p.src), 0);
+    const flush = () => { if (cur.length) rows.push(cur); cur = []; };
+    for (const p of list) {
+      if (p.layout === "full" && ratioOf(p.src) >= 1.2) { flush(); rows.push([p]); continue; }
+      cur.push(p);
+      if (sum(cur) >= 1.9 || cur.length === 3) flush();
     }
-    return out;
+    // A lone leftover (e.g. one portrait) joins the row before it rather than standing alone.
+    if (cur.length && sum(cur) < 1.2 && rows.length && sum(rows[rows.length - 1]) + sum(cur) <= 3.6) rows[rows.length - 1].push(...cur);
+    else flush();
+    return rows;
   }
 
   function figure(p, list, lazy, sizes) {
@@ -198,10 +206,17 @@
     meta.hidden = !isShoot;
     if (isShoot) meta.replaceChildren(...[c.type, fmtMonth(c.date), c.client, c.location].filter(Boolean)
       .map((t, i) => el("span", { class: i === 0 ? "tag" : null, text: t })));
-    const sizesFor = { full: "(max-width: 1368px) 100vw, 1320px", pair: "(max-width: 900px) 100vw, 660px", "single-half": "(max-width: 900px) 100vw, 660px" };
-    $("#sequence").replaceChildren(...(list.length ? buildRows(list).map((r, i) =>
-      el("div", { class: `row ${r.kind}` }, r.photos.map((p) => figure(p, list, i > 0, sizesFor[r.kind]))))
-      : [el("p", { class: "empty", text: "No photos here yet." })]));
+    $("#sequence").replaceChildren(...(list.length ? buildRows(list).map((row, i) => {
+      const total = row.reduce((s, p) => s + ratioOf(p.src), 0);
+      const single = row.length === 1 && total < 1.2; // a lone tall photo: centred, not blown up
+      return el("div", { class: `photo-row seq-row${single ? " single" : ""}`, style: single ? `--r: ${total.toFixed(4)}` : null },
+        row.map((p) => {
+          const r = ratioOf(p.src);
+          const f = figure(p, list, i > 0, `(max-width: 760px) 100vw, ${Math.round(1320 * r / total)}px`);
+          f.style.flex = `${r.toFixed(4)} 1 0`;
+          return f;
+        }));
+    }) : [el("p", { class: "empty", text: "No photos here yet." })]));
     const group = isShoot ? SHOOT_LIST : CATEGORIES;
     const ci = group.indexOf(c), nxt = group[(ci + 1) % group.length];
     const nl = $("#cat-next-link");

@@ -2,20 +2,21 @@
 // Run from the repo root after adding or replacing a photo in images/:
 //   npm i --no-save sharp && node tools/resize.mjs
 import sharp from "sharp";
-import { readdir, mkdir, writeFile } from "node:fs/promises";
+import { readdir, mkdir, writeFile, rm } from "node:fs/promises";
+import { colourOptions } from "./colour.mjs";
 
 const WIDTHS = [800, 1600];
 const files = (await readdir("images")).filter((f) => /\.jpe?g$/i.test(f)).sort();
 const sizes = {};
-for (const w of WIDTHS) await mkdir(`images/${w}`, { recursive: true });
+for (const w of WIDTHS) { await rm(`images/${w}`, { recursive: true, force: true }); await mkdir(`images/${w}`, { recursive: true }); }
 for (const f of files) {
   const src = `images/${f}`;
-  const { width, height } = await sharp(src).metadata();
-  sizes[src] = [width, height];
+  const meta = await sharp(src).metadata();
+  sizes[src] = [meta.width, meta.height];
   for (const w of WIDTHS) {
-    if (w >= width) continue;
-    // sharp drops all metadata (including any location) unless asked to keep it
-    await sharp(src).resize({ width: w }).jpeg({ quality: 80, mozjpeg: true }).toFile(`images/${w}/${f}`);
+    if (w >= meta.width) continue;
+    // Width-only resize keeps the photo's aspect ratio; EXIF and location are dropped.
+    await colourOptions(sharp(src).resize({ width: w }), meta, 86).toFile(`images/${w}/${f}`);
   }
 }
 const body = Object.entries(sizes).map(([k, v]) => `  ${JSON.stringify(k)}: [${v}]`).join(",\n");

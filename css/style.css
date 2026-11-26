@@ -215,7 +215,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: #000; min-width: 0;
 }
 .cats-row:nth-child(even) .cat-label h2 { font-size: var(--step-2); }
-.cat img { width: 100%; height: auto; transition: transform 0.9s cubic-bezier(.2,.7,.2,1), opacity 0.4s; opacity: 0.92; }
+.cat img { width: 100%; height: auto; transition: transform 0.9s cubic-bezier(.2,.7,.2,1); }
 .cat:hover img, .cat:focus-visible img { transform: scale(1.025); opacity: 1; }
 .cat::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0) 55%); }
 .cat-label {
@@ -231,20 +231,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* ---------- Category / carousel ---------- */
 .back { text-decoration: none; color: var(--muted); }
 .back:hover { color: var(--fg); }
-/* The series as one scrolling sequence: wide photos full width, "half" photos in pairs. */
-.sequence { display: grid; gap: clamp(40px, 7vw, 96px); margin-top: clamp(32px, 5vw, 56px); }
-.sequence .row { display: grid; gap: clamp(12px, 2vw, 28px); }
-.sequence .row.pair { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; }
-.sequence .row.single-half { width: min(100%, 50%); margin-inline: auto; }
-.sequence figure { margin: 0 auto; display: grid; gap: 10px; width: fit-content; max-width: 100%; }
-.sequence .open { display: block; padding: 0; border: 0; background: none; cursor: zoom-in; overflow: hidden; }
-.sequence img { width: auto; height: auto; max-width: 100%; max-height: 86vh; transition: transform 0.7s cubic-bezier(.2,.7,.2,1); }
+/* The series as justified rows (built in app.js): photos in a row share a height and fill the
+   width together, so they tile edge to edge at their own shapes. Phones stack them. */
+.sequence { display: grid; gap: clamp(18px, 2.4vw, 32px); margin-top: clamp(32px, 5vw, 56px); }
+.sequence figure { margin: 0; display: grid; gap: 8px; }
+.sequence .single { justify-content: center; }
+.sequence .single figure { flex: none !important; width: min(100%, calc(var(--r) * 80vh)); }
+.sequence .open { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; overflow: hidden; }
+.sequence img { width: 100%; height: auto; transition: transform 0.7s cubic-bezier(.2,.7,.2,1); }
 .sequence .open:hover img { transform: scale(1.02); }
-.sequence figcaption { width: 0; min-width: 100%; }
-@media (max-width: 900px) {
-  .sequence .row.pair { grid-template-columns: minmax(0, 1fr); }
-  .sequence .row.single-half { width: 100%; }
-}
+.sequence figcaption { min-width: 0; }
 figcaption { display: flex; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; }
 figcaption .t { font-weight: 500; }
 figcaption .mono { color: var(--muted); }

@@ -76,6 +76,7 @@ const PHOTOS = [
   {"src": "images/gt-car.jpg", "title": "In the car", "category": "motion", "subject": "motorsport", "color": "neutral", "date": "2026-05-04", "layout": "half", "settings": "Georgia Tech"},
   {"src": "images/zoom-burst.jpg", "title": "Zoom burst", "category": "motion", "subject": "motorsport", "color": "blue", "date": "2026-04-13", "layout": "half", "settings": "Kennesaw, GA"},
   {"src": "images/f40.jpg", "title": "F40, front corner", "category": "motion", "subject": "motorsport", "color": "red", "date": "2026-04-05", "layout": "half", "settings": "Georgia Tech"},
+  {"src": "images/f40-side.jpg", "title": "F40, side profile", "category": "motion", "subject": "motorsport", "color": "red", "date": "2026-04-05", "layout": "full", "settings": "Georgia Tech"},
   {"src": "images/snowboarder.jpg", "title": "Through the snow guns", "category": "motion", "subject": "sport", "color": "neutral", "date": "2026-01-19", "layout": "half"},
   {"src": "images/swim.jpg", "title": "From the grandstands", "category": "motion", "subject": "sport", "color": "blue", "date": "2025-10-17", "layout": "half"},
   {"src": "images/paddle-sunset.jpg", "title": "Paddler at sunset", "category": "place", "subject": "landscape", "color": "orange", "date": "2026-01-07", "layout": "full", "settings": "Naples, FL"},

@@ -14,6 +14,7 @@ const SIZES = {
   "images/drummer.jpg": [1920,2400],
   "images/dublin-arch.jpg": [1600,2400],
   "images/eiffel-iron.jpg": [2400,1600],
+  "images/f40-side.jpg": [2400,1100],
   "images/f40.jpg": [1350,2400],
   "images/firefighter.jpg": [1920,2400],
   "images/grad-kendrean.jpg": [1600,2400],
