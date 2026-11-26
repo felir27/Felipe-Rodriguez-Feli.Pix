@@ -43,6 +43,19 @@
   const img = (src, alt, sizes, lazy = true) => el("img", { ...imgAttrs(src, sizes), alt: alt || "", loading: lazy ? "lazy" : null, decoding: "async" });
   const setImg = (node, src, sizes) => { const a = imgAttrs(src, sizes); ["srcset", "sizes", "width", "height"].forEach((k) => a[k] ? node.setAttribute(k, a[k]) : node.removeAttribute(k)); node.src = src; };
   const imgEl = (p, lazy = true, sizes) => img(p.src, p.title, sizes, lazy);
+  // A photo's true width/height ratio. Layouts use it so photos are never cropped or stretched.
+  const ratioOf = (src) => { const d = SIZE_MAP[src]; return d ? d[0] / d[1] : 1.5; };
+  // Split items into rows (2 then 3, repeating); each tile's flex-grow is its photo's ratio,
+  // so every photo in a row ends up the same height at its own shape.
+  function photoRows(items, srcOf, makeTile, cls) {
+    const rows = [];
+    for (let i = 0, n = 2; i < items.length; i += n, n = n === 2 ? 3 : 2) rows.push(items.slice(i, i + n));
+    return rows.map((row) => el("div", { class: `photo-row ${cls}` }, row.map((it, j) => {
+      const t = makeTile(it, row.length);
+      t.style.flex = `${ratioOf(srcOf(it)).toFixed(4)} 1 0`;
+      return t;
+    })));
+  }
 
   /* ---------- Static site text ---------- */
   function fillSite() {
@@ -126,25 +139,30 @@
   function renderPortfolio() {
     $("#all-box-stack").replaceChildren(...PHOTOS.slice(0, 4).map((p) => img(p.src, "", "40px")));
     $("#all-box-count").textContent = ` ${PHOTOS.length} photos, filter by subject, color and date`;
-    $("#cats").replaceChildren(...CATEGORIES.map((c, i) => {
+    const coverOf = (c) => c.cover || (photosIn(c.slug)[0] || {}).src;
+    $("#cats").replaceChildren(...photoRows(CATEGORIES, coverOf, (c, perRow) => {
       const n = photosIn(c.slug).length;
       return el("a", { class: "cat", href: `#cat-${c.slug}` },
-        img(c.cover || (photosIn(c.slug)[0] || {}).src, "", i === 0 ? "(max-width: 760px) 100vw, 880px" : "(max-width: 760px) 100vw, 440px"),
+        img(coverOf(c), "", perRow === 2 ? "(max-width: 760px) 100vw, 660px" : "(max-width: 760px) 100vw, 440px"),
         el("div", { class: "cat-label" },
           el("h2", { text: c.name }),
           el("span", { class: "mono", text: `${String(n).padStart(2, "0")} photos →` })));
-    }));
+    }, "cats-row"));
 
     $("#shoots").hidden = SHOOT_LIST.length === 0;
     $("#shoots-intro").textContent = SITE.shootsIntro || "";
-    $("#shoot-grid").replaceChildren(...SHOOT_LIST.map((sh) => {
-      const ph = photosInShoot(sh.slug);
-      return el("a", { class: "shoot", href: `#shoot-${sh.slug}` },
-        el("span", { class: "frame" }, img(sh.cover || (ph[0] || {}).src, "", "(max-width: 700px) 100vw, 440px")),
+    const shootCover = (sh) => sh.cover || (photosInShoot(sh.slug)[0] || {}).src;
+    // One row per three shoots, each card sized to its cover's shape.
+    const shootRows = [];
+    for (let i = 0; i < SHOOT_LIST.length; i += 3) shootRows.push(SHOOT_LIST.slice(i, i + 3));
+    $("#shoot-grid").replaceChildren(...shootRows.map((row) => el("div", { class: "photo-row shoots-row" }, row.map((sh) => {
+      const card = el("a", { class: "shoot", href: `#shoot-${sh.slug}`, style: `flex: ${ratioOf(shootCover(sh)).toFixed(4)} 1 0` },
+        el("span", { class: "frame" }, img(shootCover(sh), "", "(max-width: 700px) 100vw, 440px")),
         el("span", { class: "row mono" }, el("span", { class: "tag", text: sh.type || "" }), el("span", { text: fmtMonth(sh.date) })),
         el("h3", { text: sh.name }),
         el("p", { class: "client", text: [sh.client, sh.location].filter(Boolean).join(" · ") }));
-    }));
+      return card;
+    }))));
   }
 
   /* ---------- Category / shoot: the whole series as a scrolling sequence ---------- */
