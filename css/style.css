@@ -190,7 +190,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .all-box:hover { border-color: var(--accent); }
 .all-box .stack { display: flex; }
-.all-box .stack img { width: auto; height: 40px; border: 2px solid var(--surface); }
+.all-box .stack img { width: auto; height: 40px; box-shadow: 0 0 0 2px var(--surface); }
 .all-box .stack img + img { margin-left: -14px; }
 .all-box strong { font-weight: 600; display: block; line-height: 1.2; }
 .all-box .mono { color: var(--muted); }
