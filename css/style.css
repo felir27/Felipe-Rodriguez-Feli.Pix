@@ -312,8 +312,9 @@ figcaption .award, .tile .meta .award { flex-basis: 100%; color: var(--accent); 
 }
 .lightbox .top { display: flex; justify-content: space-between; align-items: center; }
 .lightbox .icon-btn { color: #eee; border-color: rgba(255,255,255,0.25); }
-.lightbox .img-wrap { display: grid; place-items: center; min-height: 0; position: relative; }
-.lightbox img { max-height: 100%; max-width: 100%; object-fit: contain; }
+.lightbox .img-wrap { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; min-height: 0; position: relative; }
+/* Whole photo fits the viewer: definite cell above lets max-height:100% work; width/height auto keeps the ratio */
+.lightbox img { width: auto; height: auto; max-height: 100%; max-width: 100%; object-fit: contain; }
 .lightbox .nav-l, .lightbox .nav-r { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); }
 .lightbox .nav-l { left: 0; } .lightbox .nav-r { right: 0; }
 .lightbox figcaption { padding-top: 14px; }
