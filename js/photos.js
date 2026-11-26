@@ -46,9 +46,9 @@ const SHOOTS = [
   { slug: "hytech-team", name: "HyTech Racing", client: "HyTech Racing", type: "Team & motorsport",
     date: "2026-10-14", location: "Georgia Tech & Kennesaw, GA", cover: "images/hytech-mech.jpg",
     blurb: "Sub-team portraits with the HT11 car for the team's 'Meet the Leads' series, plus drivers and the car at testing in Kennesaw and on campus." },
-  { slug: "live-show", name: "Live Show", client: "Live band", type: "Event",
+  { slug: "live-show", name: "Live Show", client: "Monkey Business", type: "Event",
     date: "2026-08-15", location: "Miami, FL", cover: "images/drummer.jpg",
-    blurb: "Stage coverage of a live set, shot under colored stage light." },
+    blurb: "Stage coverage of a Monkey Business set, shot under colored stage light." },
   { slug: "grad-2025", name: "Graduation Portraits", client: "Private clients", type: "Portraits",
     date: "2026-11-23", location: "Georgia Tech campus", cover: "images/grad-kendrean.jpg",
     blurb: "Cap-and-gown sessions around campus." },
@@ -99,5 +99,7 @@ const PHOTOS = [
   {"src": "images/grad-steps.jpg", "title": "Up the steps", "shoot": "grad-2025", "subject": "portrait", "color": "neutral", "date": "2026-11-23", "layout": "half"},
   {"src": "images/grad-wreck.jpg", "title": "Behind the wheel of the Wreck", "shoot": "grad-2025", "subject": "portrait", "color": "yellow", "date": "2026-11-23", "layout": "half"},
   {"src": "images/grad-seal.jpg", "title": "Seal and cord", "shoot": "grad-2025", "subject": "portrait", "color": "blue", "date": "2026-11-23", "layout": "half"},
-  {"src": "images/drummer.jpg", "title": "Drummer, monkey head on", "shoot": "live-show", "subject": "event", "color": "blue", "date": "2026-08-15", "layout": "half"}
+  {"src": "images/drummer.jpg", "title": "Drummer, monkey head on", "shoot": "live-show", "subject": "event", "color": "blue", "date": "2026-08-15", "layout": "half"},
+  {"src": "images/band-guitar-blur.jpg", "title": "Guitar, mid-song", "shoot": "live-show", "subject": "event", "color": "orange", "date": "2026-08-15", "layout": "half"},
+  {"src": "images/band-back-to-back.jpg", "title": "Back to back", "shoot": "live-show", "subject": "event", "color": "green", "date": "2026-08-15", "layout": "half"}
 ];

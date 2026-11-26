@@ -1,6 +1,8 @@
 /* Made by tools/resize.mjs: each photo's full width and height, and the smaller copies that exist. Don't edit by hand. */
 const SIZES = {
   "images/backlit-driver.jpg": [1600,2400],
+  "images/band-back-to-back.jpg": [1920,2400],
+  "images/band-guitar-blur.jpg": [1920,2400],
   "images/barrier.jpg": [1600,2400],
   "images/basel-kid.jpg": [2400,1600],
   "images/blinds.jpg": [1600,2400],
