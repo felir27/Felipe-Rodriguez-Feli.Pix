@@ -50,7 +50,7 @@ const SHOOTS = [
     date: "2026-08-15", location: "Miami, FL", cover: "images/drummer.jpg",
     blurb: "Stage coverage of a live set, shot under colored stage light." },
   { slug: "grad-2025", name: "Graduation Portraits", client: "Private clients", type: "Portraits",
-    date: "2025-07-31", location: "Georgia Tech campus", cover: "images/grad-kendrean.jpg",
+    date: "2026-11-23", location: "Georgia Tech campus", cover: "images/grad-kendrean.jpg",
     blurb: "Cap-and-gown sessions around campus." },
 ];
 
@@ -94,6 +94,9 @@ const PHOTOS = [
   {"src": "images/hytech-mech.jpg", "title": "Mechanical leads", "shoot": "hytech-team", "subject": "portrait", "color": "green", "date": "2026-10-14", "layout": "full"},
   {"src": "images/hytech-elec.jpg", "title": "Electrical & software leads", "shoot": "hytech-team", "subject": "portrait", "color": "green", "date": "2026-10-14", "layout": "full"},
   {"src": "images/grad-kendrean.jpg", "title": "Tech Tower", "shoot": "grad-2025", "subject": "portrait", "color": "red", "date": "2025-07-31", "layout": "half"},
-  {"src": "images/grad-shalina.jpg", "title": "The colonnade", "shoot": "grad-2025", "subject": "portrait", "color": "yellow", "date": "2025-07-31", "layout": "half"},
+  {"src": "images/grad-tower-group.jpg", "title": "The class at Tech Tower", "shoot": "grad-2025", "subject": "portrait", "color": "red", "date": "2026-11-23", "layout": "half"},
+  {"src": "images/grad-steps.jpg", "title": "Up the steps", "shoot": "grad-2025", "subject": "portrait", "color": "neutral", "date": "2026-11-23", "layout": "half"},
+  {"src": "images/grad-wreck.jpg", "title": "Behind the wheel of the Wreck", "shoot": "grad-2025", "subject": "portrait", "color": "yellow", "date": "2026-11-23", "layout": "half"},
+  {"src": "images/grad-seal.jpg", "title": "Seal and cord", "shoot": "grad-2025", "subject": "portrait", "color": "blue", "date": "2026-11-23", "layout": "half"},
   {"src": "images/drummer.jpg", "title": "Drummer, monkey head on", "shoot": "live-show", "subject": "event", "color": "blue", "date": "2026-08-15", "layout": "half"}
 ];
