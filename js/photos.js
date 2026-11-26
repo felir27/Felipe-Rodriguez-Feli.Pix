@@ -6,7 +6,7 @@ const SITE = {
   heroImage: "images/paddle-sunset.jpg",
   aboutImage: "images/backlit-driver.jpg",
   location: "Miami & Atlanta",
-  email: "you@example.com",
+  email: "feliperodriguezgomis@gmail.com",
   instagram: "https://www.instagram.com/feli.pix_/",
   formEndpoint: "",
 
